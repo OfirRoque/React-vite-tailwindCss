@@ -6,17 +6,15 @@ import TodoComputed from "./components/TodoComputed";
 import TodoFilter from "./components/TodoFilter";
 import { useState, useEffect } from "react";
 
-const InitialStateTodo = [
-  { id: 1, title: "Ver porno", completed: true },
-  { id: 2, title: "Ver Netflix", completed: true },
-  { id: 3, title: "Ver Potos", completed: true },
-  { id: 4, title: "Ir al gim", completed: true },
-  { id: 5, title: "Trabajar", completed: false },
-];
+const InitialStateTodo = JSON.parse(localStorage.getItem("todos")) || [];
 
 const App = () => {
   const [todos, setTodos] = useState(InitialStateTodo);
   const [filter, setFilter] = useState("all");
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   const handleCreateTodo = (title) => {
     const newTodo = {
@@ -76,7 +74,7 @@ const App = () => {
           computedItemsLeft={computedItemsLeft}
           clearCompleted={clearCompleted}
         />
-        <TodoFilter filter={filter} changeFilter={changeFilter}/>
+        <TodoFilter filter={filter} changeFilter={changeFilter} />
       </main>
 
       <footer className="text-center mt-8 dark:text-gray-500">
