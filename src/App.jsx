@@ -16,6 +16,8 @@ const InitialStateTodo = [
 
 const App = () => {
   const [todos, setTodos] = useState(InitialStateTodo);
+  const [filter, setFilter] = useState("all");
+
   const handleCreateTodo = (title) => {
     const newTodo = {
       id: Date.now(),
@@ -41,15 +43,32 @@ const App = () => {
     setTodos(todos.filter((e) => !e.completed));
   };
 
+  const filteresTodos = () => {
+    switch (filter) {
+      case "all":
+        return todos;
+      case "active":
+        return todos.filter((e) => !e.completed);
+      case "completed":
+        return todos.filter((e) => e.completed);
+      default:
+        return todos;
+    }
+  };
+
+  const changeFilter = (filter) => {
+    setFilter(filter);
+  };
+
   return (
     <div
-      className={`bg-[url('./assets/images/bg-mobile-light.jpg')] bg-no-repeat bg-contain bg-gray-300 min-h-screen`}
+      className={`bg-[url('./assets/images/bg-mobile-light.jpg')] dark:bg-[url('./assets/images/bg-mobile-dark.jpg')] bg-no-repeat bg-contain bg-gray-300 min-h-screen dark:bg-gray-900 transition-all duration-1000`}
     >
       <Header />
       <main className="container mx-auto px-4 mt-8">
         <TodoCreate handleCreateTodo={handleCreateTodo} />
         <TodoList
-          todos={todos}
+          todos={filteresTodos()}
           removeTodo={removeTodo}
           handleClick={handleClick}
         />
@@ -57,10 +76,10 @@ const App = () => {
           computedItemsLeft={computedItemsLeft}
           clearCompleted={clearCompleted}
         />
-        <TodoFilter />
+        <TodoFilter filter={filter} changeFilter={changeFilter}/>
       </main>
 
-      <footer className="text-center mt-8">
+      <footer className="text-center mt-8 dark:text-gray-500">
         Drag and drop to reorder list
       </footer>
     </div>
