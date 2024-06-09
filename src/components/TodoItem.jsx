@@ -15,7 +15,7 @@ const TodoItem = ({ todo, handleClick, removeTodo }) => {
         {completed && <Check />}
       </button>
       <p
-        className={` grow transition-all duration-1000 dark:text-white ${completed && "line-through text-gray-400  dark:text-gray-600 "}`}
+        className={` grow transition-all duration-1000 text-gray-500 ${completed && "line-through dark:text-gray-600 "}`}
       >
         {title}
       </p>
