@@ -1,4 +1,4 @@
-import ImageBg from "./assets/images/bg-mobile-light.jpg";
+import { DragDropContext, Draggable } from "@hello-pangea/dnd";
 import Header from "./components/Header";
 import TodoCreate from "./components/TodoCreate";
 import TodoList from "./components/TodoList";
@@ -7,6 +7,13 @@ import TodoFilter from "./components/TodoFilter";
 import { useState, useEffect } from "react";
 
 const InitialStateTodo = JSON.parse(localStorage.getItem("todos")) || [];
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = [...list];
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  return result;
+};
 
 const App = () => {
   const [todos, setTodos] = useState(InitialStateTodo);
@@ -58,6 +65,19 @@ const App = () => {
     setFilter(filter);
   };
 
+  const hadleDragEnd = (result) => {
+    const { destination, source } = result;
+    if(!destination) return;
+    if (
+      source.index === destination.index &&
+      source.droppableId === destination.droppableId
+    )
+      return;
+    setTodos((prevTasks) =>
+      reorder(prevTasks, source.index, destination.index)
+    );
+  };
+
   return (
     <div
       className={`bg-[url('./assets/images/bg-mobile-light.jpg')] dark:bg-[url('./assets/images/bg-mobile-dark.jpg')] bg-no-repeat bg-contain bg-gray-300 min-h-screen dark:bg-gray-900 transition-all duration-1000 md:bg-[url('./assets/images/bg-desktop-light.jpg')] md:dark:bg-[url('./assets/images/bg-desktop-dark.jpg')]`}
@@ -65,11 +85,13 @@ const App = () => {
       <Header />
       <main className="container mx-auto px-4 mt-8 md:max-w-xl">
         <TodoCreate handleCreateTodo={handleCreateTodo} />
-        <TodoList
-          todos={filteresTodos()}
-          removeTodo={removeTodo}
-          handleClick={handleClick}
-        />
+        <DragDropContext onDragEnd={hadleDragEnd}>
+          <TodoList
+            todos={filteresTodos()}
+            removeTodo={removeTodo}
+            handleClick={handleClick}
+          />
+        </DragDropContext>
         <TodoComputed
           computedItemsLeft={computedItemsLeft}
           clearCompleted={clearCompleted}
